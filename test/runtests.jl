@@ -1,6 +1,7 @@
 using SpectralMethodsTutorials
+using SpectralMethodsTutorials: test_ch3
 using Test
 
 @testset "SpectralMethodsTutorials.jl" begin
-    # Write your tests here.
+    test_ch3()
 end
