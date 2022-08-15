@@ -74,7 +74,7 @@ function differentiation_matrix(xg::AbstractVector)
    return SMatrix{nd,nd}(D)
 end
 
-function differentiation_matrix(m::Int64, x::AbstractVector)
+function differentiation_matrix(m::Int, x::AbstractVector)
    nd = length(x)
    w = barycentric_weights(x)
    D = zeros(eltype(x), nd, nd)

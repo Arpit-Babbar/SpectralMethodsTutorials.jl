@@ -1,10 +1,10 @@
 using UnPack
 
-struct QuadMap
-   X1::Tuple{Float64,Float64}
-   X2::Tuple{Float64,Float64}
-   X3::Tuple{Float64,Float64}
-   X4::Tuple{Float64,Float64}
+struct QuadMap{RealType}
+   X1::Tuple{RealType,RealType}
+   X2::Tuple{RealType,RealType}
+   X3::Tuple{RealType,RealType}
+   X4::Tuple{RealType,RealType}
 end
 
 function (quad_map::QuadMap)(ξ,η)
@@ -23,12 +23,12 @@ function (quad_map::QuadMap)(Ξ)
    quad_map(Ξ[1],Ξ[2])
 end
 
-struct CurveInterpolant # TODO - Communicate array size to compiler?
-   N::Float64
-   xg::Vector{Float64} # single parameter values at which curve is known
-   coords_x::Vector{Float64} # Known x-locations of curve where parameter values are xg
-   coords_y::Vector{Float64} # Known y-locations of curve where paramater values are xg
-   wg::Vector{Float64}  # Barycentric weights
+struct CurveInterpolant{IntType, RealType} # TODO - Communicate array size to compiler?
+   N::IntType
+   xg::Vector{RealType} # single parameter values at which curve is known
+   coords_x::Vector{RealType} # Known x-locations of curve where parameter values are xg
+   coords_y::Vector{RealType} # Known y-locations of curve where paramater values are xg
+   wg::Vector{RealType}  # Barycentric weights
 end
 
 function CurveInterpolant(N, xg, coords)
@@ -161,10 +161,10 @@ function quad_map_metric(quad_map::QuadMap, ξ, η)
    return Xξ, Xη, Yξ, Yη
 end
 
-struct MappedGeometry{RealType}
+struct MappedGeometry{IntType, RealType}
    # Total points along x,y directions
-   N::Int64
-   M::Int64
+   N::IntType
+   M::IntType
 
    # Node locations
    x::Array{RealType, 2}
