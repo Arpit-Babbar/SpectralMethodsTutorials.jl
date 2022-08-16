@@ -3,8 +3,10 @@ using Test
 using SpectralMethodsTutorials: barycentric_weights,
                                 lagrange_interpolation,
                                 lagrange_derivative,
-                                differentiation_matrix
+                                differentiation_matrix,
+                                chebyshev_lobatto
 )
+using ChebyshevApprox
 
 function test_weights()
    x = [1.0, 2.0, 3.0]
@@ -67,6 +69,10 @@ function test_diff_mat4()
    @test D*f_vals ≈ 6.0*ones(nd)
 end
 
+function test_chebyshev()
+   @test chebyshev_lobatto(degree = 3)[1] ≈ chebyshev_extrema(4)
+end
+
 function test_ch3()
    test_weights()
    test_interpolation()
@@ -76,6 +82,7 @@ function test_ch3()
    test_diff_mat2()
    test_diff_mat3()
    test_diff_mat4()
+   test_chebyshev()
 end
 
 @testset begin

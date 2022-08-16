@@ -96,17 +96,18 @@ function draw_mapped_geometry_normals(p, geometry; frequency = 3)
 
 end
 
-function test_mapped_geometry(;N = 10, M = 10, sol_points=gausslobatto,
+function test_mapped_geometry(;N = 10, M = 10, sol_points = gausslobatto,
                                curves_resolution_degree = 8, normal_frequency = 3)
-   nodal_storage = Nodal2DStorage(N, M, sol_points=sol_points)
+   nodal_storage = Nodal2DStorage(N, M, sol_points = sol_points)
    quad_map = construct_transfinite_quad_M1(resolution = curves_resolution_degree)
    geometry = MappedGeometry(nodal_storage, quad_map)
-   @unpack x, y = geometry
-   Nd, Md = N+1, M+1
+
    p = plot()
    draw_mapped_geometry_interior!(p, geometry)
    draw_mapped_geometry_boundaries(p, geometry)
    draw_mapped_geometry_normals(p, geometry, frequency = normal_frequency)
 
-   return p
+   return geometry, p
 end
+
+

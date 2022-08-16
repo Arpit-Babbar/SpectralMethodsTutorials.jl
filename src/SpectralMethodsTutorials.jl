@@ -1,5 +1,6 @@
 module SpectralMethodsTutorials
 
+include("auxiliary.jl")
 include("ch3.jl")
 include("ch3_tests.jl")
 include("ch5.jl")

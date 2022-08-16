@@ -97,8 +97,7 @@ function differentiation_matrix(m::Int, x::AbstractVector)
    return SMatrix{nd,nd}(D)
 end
 
-# TODO - Where do they come from??
-function chebyshev_lobatto(;degree)
+function chebyshev_lobatto(;degree::Int)
    nd = degree + 1
    x, w = zeros(nd), zeros(nd)
    for j in 0:degree
