@@ -25,10 +25,10 @@ end
 
 struct CurveInterpolant{IntType, RealType} # TODO - Communicate array size to compiler?
    N::IntType
-   xg::Vector{RealType} # single parameter values at which curve is known
-   coords_x::Vector{RealType} # Known x-locations of curve where parameter values are xg
-   coords_y::Vector{RealType} # Known y-locations of curve where paramater values are xg
-   wg::Vector{RealType}  # Barycentric weights
+   xg::OffsetVector{RealType} # single parameter values at which curve is known
+   coords_x::OffsetVector{RealType} # Known x-locations of curve where parameter values are xg
+   coords_y::OffsetVector{RealType} # Known y-locations of curve where paramater values are xg
+   wg::OffsetVector{RealType}  # Barycentric weights
 end
 
 function CurveInterpolant(N, xg, coords)
@@ -167,44 +167,43 @@ struct MappedGeometry{IntType, RealType}
    M::IntType
 
    # Node locations
-   x::Array{RealType, 2}
-   y::Array{RealType, 2}
+   x::OffsetArray{RealType, 2, Array{RealType, 2}}
+   y::OffsetArray{RealType, 2, Array{RealType, 2}}
 
    # Boundary node locations
-   xb::Array{RealType, 2} # second index to mark curve from 1:4
-   yb::Array{RealType, 2} # second index to mark curve from 1:4
+   xb::OffsetArray{RealType, 2, Array{RealType, 2}} # second index to mark curve from 1:4
+   yb::OffsetArray{RealType, 2, Array{RealType, 2}} # second index to mark curve from 1:4
 
    # Metric terms
-   Xξ::Array{RealType, 2}
-   Xη::Array{RealType, 2}
-   Yξ::Array{RealType, 2}
-   Yη::Array{RealType, 2}
+   Xξ::OffsetArray{RealType, 2, Array{RealType, 2}}
+   Xη::OffsetArray{RealType, 2, Array{RealType, 2}}
+   Yξ::OffsetArray{RealType, 2, Array{RealType, 2}}
+   Yη::OffsetArray{RealType, 2, Array{RealType, 2}}
 
-   J::Array{RealType, 2} # Jacobian
+   J::OffsetArray{RealType, 2, Array{RealType, 2}} # Jacobian
 
-   normal::Array{Tuple{RealType, RealType}, 2} # Boundary normals for each of 4 sides
+   normal::OffsetArray{Tuple{RealType, RealType}, 2, Array{Tuple{RealType, RealType}, 2}} # Boundary normals for each of 4 sides
 
-   scal::Array{RealType, 2} # Scaling factor for each of 4 sides
+   scal::OffsetArray{RealType, 2, Array{RealType, 2}} # Scaling factor for each of 4 sides
 end
 
 # Constructor
 function MappedGeometry(spA::Nodal2DStorage,
                         transfinite_quad_map::TransfiniteQuadMap)
    @unpack N, M, ξ, η, Dξ, Dη = spA
-   Nd, Md = N+1, M+1 # Number of nodes in each direction
    RealType = eltype(ξ)
    transfinite_metrics(ξ_, η_) = transfinite_quad_metrics(transfinite_quad_map, ξ_, η_)
 
-   arr = () -> Array{RealType}(undef, Nd, Md)
+   arr = () -> OffsetArray(Array{RealType}(undef, N+1, M+1), OffsetArrays.Origin(0,0))
    x, y, Xξ, Xη, Yξ, Yη, J = ( arr() for _ in 1:7)
 
-   arr = () -> Array{RealType}(undef, max(Nd, Md), 4)
+   arr = () -> OffsetArray(Array{RealType}(undef, max(N+1, M+1), 4), OffsetArrays.Origin(0,1))
    xb, yb, scal = ( arr() for _ in 1:3 )
 
-   normal = Array{Tuple{RealType,RealType}}(undef , max(Nd,Md), 4)
+   normal = OffsetArray(Array{Tuple{RealType,RealType}}(undef , max(N+1,M+1), 4), OffsetArrays.Origin(0,1))
 
    # Inner nodes, metrics, jacobian
-   for j in 1:Md, i in 1:Nd
+   for j in 0:M, i in 0:N
       x[i,j], y[i,j] = transfinite_quad_map(ξ[i], η[j])
       Xξ_, Xη_, Yξ_, Yη_ = transfinite_metrics(ξ[i], η[j])
       J[i,j] = Xξ_*Yη_ - Xη_*Yξ_
@@ -219,7 +218,7 @@ function MappedGeometry(spA::Nodal2DStorage,
    # ____1____
 
    # Boundary mapped by vertical edges of reference cell
-   for j in 1:Md
+   for j in 0:M
       # Right vertical edge
       xb[j,2], yb[j,2] = transfinite_quad_map(1.0, η[j])
       Xξ_, Xη_, Yξ_, Yη_ = transfinite_metrics(1.0, η[j])
@@ -238,7 +237,7 @@ function MappedGeometry(spA::Nodal2DStorage,
    end
 
    # Boundary mapped by horizontal edges of reference cell
-   for i in 1:Nd
+   for i in 0:N
       # Bottom horizontal edge
       xb[i,1], yb[i,1] = transfinite_quad_map(ξ[i], -1.0)
       Xξ_, Xη_, Yξ_, Yη_ = transfinite_metrics(ξ[i], -1.0)

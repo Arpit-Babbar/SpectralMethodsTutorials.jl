@@ -1,7 +1,7 @@
 using UnPack
 using StaticArrays
 using FastGaussQuadrature
-
+using OffsetArrays
 
 # Vector and Matrix type are parametrized so user can choose static
 # if size is small
@@ -22,13 +22,15 @@ function Nodal2DStorage(N::Real, M::Real; sol_points=gausslobatto)
    Nd, Md = N + 1, M + 1
    ξ, _ = sol_points(Nd)
    η, _ = sol_points(Md)
+   osv(v) = OffsetArray(v, OffsetArrays.Origin(0))
+   ξ, η = osv(SVector{Nd}(ξ)), osv(SVector{Md}(η))
    Dξ = differentiation_matrix(1, ξ)
    Dη = differentiation_matrix(1, η)
    D2ξ = differentiation_matrix(2, ξ)
    D2η = differentiation_matrix(2, η)
    # TODO - Remove the static type, these are big arrays
-   Nodal2DStorage( N, M, SVector{Nd}(ξ), SVector{Md}(η),
-                   SMatrix{Nd,Nd}(Dξ), SMatrix{Md,Md}(Dη),
-                   SMatrix{Nd,Nd}(D2ξ), SMatrix{Md,Md}(D2η) )
+   Nodal2DStorage( N, M, ξ, η,
+                   (SMatrix{Nd,Nd}(Dξ))  , (SMatrix{Md,Md}(Dη)),
+                   (SMatrix{Nd,Nd}(D2ξ)) , (SMatrix{Md,Md}(D2η)) )
 end
 
