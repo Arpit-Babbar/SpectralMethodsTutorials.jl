@@ -1,4 +1,12 @@
 using Plots
+using UnPack
+using SpectralMethodsTutorials
+(
+using SpectralMethodsTutorials: Nodal2DStorage,
+                                construct_transfinite_quad_M1,
+                                MappedGeometry
+)
+using FastGaussQuadrature
 
 function test_quad_map()
    quad_map_id = QuadMap( (0.,0. ), (1.,0.), (1.,1.), (0.,1.)) # map to unit square
@@ -107,7 +115,5 @@ function test_mapped_geometry(;N = 10, M = 10, sol_points = gausslobatto,
    draw_mapped_geometry_boundaries(p, geometry)
    draw_mapped_geometry_normals(p, geometry, frequency = normal_frequency)
 
-   return geometry, p
+   return p
 end
-
-

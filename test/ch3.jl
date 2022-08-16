@@ -84,7 +84,3 @@ function test_ch3()
    test_diff_mat4()
    test_chebyshev()
 end
-
-@testset begin
-   test_ch3()
-end
