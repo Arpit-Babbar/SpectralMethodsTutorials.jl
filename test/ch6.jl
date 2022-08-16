@@ -14,7 +14,6 @@ function test_mapped_geometry(test = true; )
    nodal_storage = Nodal2DStorage(N, M, sol_points = sol_points)
    quad_map = construct_transfinite_quad_M1(resolution = curves_resolution_degree)
    geometry = MappedGeometry(nodal_storage, quad_map)
-   # return geometry
    @test test_object_with_data(test, geometry, "mg_m1.json")
 end
 
