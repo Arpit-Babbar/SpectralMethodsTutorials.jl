@@ -1,7 +1,7 @@
 using JSON3
 
-src_dir = @__DIR__ # Directory of file
-test_dir() = "$src_dir/../test"
+src_dir() = @__DIR__ # Directory of file
+test_dir() = src_dir() * "/../test"
 test_data_dir() = test_dir() * "/data"
 
 # convert struct to a named tuple
@@ -58,4 +58,10 @@ function test_object_with_data(test, obj::Any, data_name::String)
    expected_data = read_dict(data_loc)
    test_result = compare_dict(data, expected_data)
    return test_result
+end
+
+# TODO - Write a unit test just for this function
+function flatten_indices(i,j,N)
+   n = i + (j-1)*(N-1)
+   return n
 end
