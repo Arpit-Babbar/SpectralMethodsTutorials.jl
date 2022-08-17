@@ -77,7 +77,7 @@ function differentiation_matrix(xg::AbstractVector)
          D[i,i] -= D[i,j]
       end
    end
-   Dm = OffsetArray(SMatrix{nd,nd}(D), OffsetArrays.Origin(0))
+   Dm = OffsetArray(SMatrix{nd,nd}(D), OffsetArrays.Origin(0,0))
    return Dm
 end
 
@@ -88,7 +88,7 @@ function differentiation_matrix(m::Int, x::AbstractVector)
    D = osm(zeros(eltype(x), nd, nd))
    D .= differentiation_matrix(x)
    if m == 1
-      return D
+      return osm(SMatrix{nd,nd}(D))
    end
    for k in 2:m
       for i in 0:N
