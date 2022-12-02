@@ -17,7 +17,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
-ChebyshevApprox = "0.2"
+ChebyshevApprox = "0.2, 0.3"
 FastGaussQuadrature = "0.4"
 JSON3 = "1"
 LinearSolve = "1"
